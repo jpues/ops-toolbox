@@ -18,8 +18,6 @@ Set environment variables prior to running `vagrant up` command (these are not r
 |--------|-----------|-----------|-------|
 |RH_USERNAME|username for RedHat subscription|Registers system with RedHat||
 |RH_PASSWORD|password for RedHat subsecrition|Registers system with RedHat||
-|OS_USERNAME|username for OS setup|Creates user + group|vagrant|
-|OS_PASSWORD|password for OS setup|Creates user + group|vagrant|
 
 ## vagrant
 To launch this VM using Vagrant
