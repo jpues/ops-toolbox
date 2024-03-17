@@ -27,12 +27,13 @@ allow_passwordless_sudo() {
 }
 
 # Parse command-line options
-while getopts ":u:p:" opt; do
+while getopts ":u:p:g:" opt; do
   case $opt in
   u) os_username="$OPTARG" ;;
   p) os_password="$OPTARG" ;;
+  g) os_group="$OPTARG" ;;
   \?)
-    echo "Usage: $0 -u <username> -p <password>"
+    echo "Usage: $0 -u <username> -p <password> -g <group>"
     exit 1
     ;;
   esac
@@ -42,10 +43,11 @@ shift $((OPTIND - 1))
 # If username and password are not provided via flags, check for environment variables
 [[ -n $os_username ]] || os_username="$OS_USERNAME"
 [[ -n $os_password ]] || os_password="$OS_PASSWORD"
+[[ -n $os_group ]] || os_group="$OS_GROUP"
 
 # Check if username and password are defined
 if [ -n "$os_username" ] && [ -n "$os_password" ]; then
-  add_user_group "$os_username"
+  add_user_group "${os_group:-$os_username}"
   add_user "$os_username" "$os_password"
   allow_passwordless_sudo "$os_username"
 else
