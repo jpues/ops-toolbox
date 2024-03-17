@@ -1,7 +1,7 @@
 ## VagrantFile
 # box configs
 box = "generic/rhel8"
-box_name = "rhel8-ops-toolbox"
+box_name = "rhel8-toolbox"
 box_ip = "10.255.7.17"
 box_mem = 4096
 box_cpu = 2
@@ -11,11 +11,18 @@ box_provider = "virtualbox"
 
 # provisioner files
 redhat_manager = "files/redhat-manager.sh"
+install_ansible = "files/install-ansible.sh"
+install_gui = "files/install-gui.sh"
+
+# synced/mounted folders
+synced_folder_src = "../.."
+synced_folder_dest = "/vagrant"
 
 # Vagrant configuration
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = true
   config.vm.box = box
+  config.vm.synced_folder synced_folder_src, synced_folder_dest
   config.vm.define box_name do |box|
     box.vm.hostname = box_name
     box.vm.network box_network, ip: box_ip
@@ -39,6 +46,8 @@ Vagrant.configure("2") do |config|
         "RH_PASSWORD"=>ENV['RH_PASSWORD']
       }
     end
+    box.vm.provision "shell", path: install_ansible
+    box.vm.provision "shell", path: install_gui
   end
   # if `vagrant destroy` is run, unregister from redhat
   config.trigger.before :destroy do |trigger|
