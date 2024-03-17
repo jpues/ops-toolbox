@@ -11,8 +11,6 @@ box_provider = "virtualbox"
 
 # provisioner files
 redhat_manager = "files/redhat-manager.sh"
-user_setup = "files/user-setup.sh"
-install_gui = "files/install-gui.sh"
 
 # Vagrant configuration
 Vagrant.configure("2") do |config|
@@ -40,16 +38,6 @@ Vagrant.configure("2") do |config|
         "RH_USERNAME"=>ENV['RH_USERNAME'],
         "RH_PASSWORD"=>ENV['RH_PASSWORD']
       }
-    end
-    box.vm.provision "shell" do |shell|
-      shell.path = user_setup
-      shell.env = {
-        "OS_USERNAME"=>ENV['OS_USERNAME'],
-        "OS_PASSWORD"=>ENV['OS_PASSWORD']
-      }
-    end
-    box.vm.provision "shell" do |shell|
-      shell.path = install_gui
     end
   end
   # if `vagrant destroy` is run, unregister from redhat
