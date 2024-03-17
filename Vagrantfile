@@ -1,8 +1,8 @@
 ## VagrantFile
 # box configs
 box = "generic/rhel8"
-box_name = "rhel8-ops"
-box_ip = "10.255.5.15"
+box_name = "rhel8-ops-toolbox"
+box_ip = "10.255.7.17"
 box_mem = 4096
 box_cpu = 2
 box_gui = true
