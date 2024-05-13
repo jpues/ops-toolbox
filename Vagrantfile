@@ -1,28 +1,24 @@
 ## VagrantFile
 # box configs
 box = "generic/rhel8"
-box_name = "rhel8-toolbox"
-box_ip = "10.255.7.17"
+box_name = "basic-box"
+box_ip = "10.255.3.77"
 box_mem = 4096
 box_cpu = 2
 box_gui = true
 box_network = "private_network"
 box_provider = "virtualbox"
 
-# provisioner files
-redhat_manager = "files/redhat-manager.sh"
-install_ansible = "files/install-ansible.sh"
-install_gui = "files/install-gui.sh"
+# synced (mounted) folders
+sync_folder_src = ".." # path on local machine; relative to this Vagrantfile
+sync_folder_dst = "/shared" # absolute path on vagrant vm; destination to mount folder
 
-# synced/mounted folders
-synced_folder_src = "../.."
-synced_folder_dest = "/vagrant"
 
 # Vagrant configuration
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = true
   config.vm.box = box
-  config.vm.synced_folder synced_folder_src, synced_folder_dest
+  config.vm.synced_folder sync_folder_src, sync_folder_dst
   config.vm.define box_name do |box|
     box.vm.hostname = box_name
     box.vm.network box_network, ip: box_ip
@@ -37,27 +33,5 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--vram", "128"]
       v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
     end
-    # provisioners - set environment variables before running `vagrant up`
-    box.vm.provision "shell" do |shell|
-      shell.path = redhat_manager
-      shell.args = "register"
-      shell.env = {
-        "RH_USERNAME"=>ENV['RH_USERNAME'],
-        "RH_PASSWORD"=>ENV['RH_PASSWORD']
-      }
-    end
-    box.vm.provision "shell", path: install_ansible
-    box.vm.provision "shell", path: install_gui
-  end
-  # if `vagrant destroy` is run, unregister from redhat
-  config.trigger.before :destroy do |trigger|
-    trigger.name = "Before Destroy trigger"
-    trigger.info = "Unregistering this VM from RedHat Subscription Manager..."
-    trigger.warn = "If this fails, unregister VM manually at https://access.redhat.com/management/systems"
-    trigger.run_remote = {
-      path: redhat_manager,
-      args: "unregister"
-    }
-    trigger.on_error = :continue
   end
 end
