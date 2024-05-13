@@ -1,26 +1,46 @@
 #!/bin/bash
-# Register/Unregister System with RedHat
-register() {
+# register/unregister system with redhat
+
+redhat_register() {
   if ! subscription-manager status; then
     if [[ -n $RH_USERNAME ]] && [[ -n $RH_PASSWORD ]]; then
       subscription-manager register --username=$RH_USERNAME --password=$RH_PASSWORD --auto-attach
-      subscription-manager usage --set "Development/Test"
-      subscription-manager role --set "RHEL Server"
-      subscription-manager service-level --set "Self-Support"
-      subscription-manager repos --enable "codeready-builder-for-rhel-8-x86_64-rpms"
+      subscription-manager usage --set "$usage"
+      subscription-manager role --set "$role"
+      subscription-manager service-level --set "$service_level"
+      subscription-manager repos --enable "$repos"
     else
       echo "Required arguments not found. Please set RH_USERNAME and RH_PASSWORD"
+      exit 1
     fi
   fi
 }
 
-unregister() {
+redhat_unregister() {
   if subscription-manager status; then
     subscription-manager unregister
   fi
 }
 
-action="$1"
-[[ $action =~ ^(register|unregister)$ ]] || (echo "Invalid input!" && exit 1)
+# Validate arguments
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $0 <register | unregister>"
+  exit 1
+fi
 
-$action
+# static
+usage="Development/Test"
+role="RHEL Server"
+service_level="Self-Support"
+repos="codeready-builder-for-rhel-8-x86_64-rpms"
+
+
+action="$1"
+case $action in
+register) redhat_register ;;
+unregister) redhat_unregister ;;
+*)
+  echo "Invalid input!"
+  exit 1
+  ;;
+esac

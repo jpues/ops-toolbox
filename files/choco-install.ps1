@@ -31,17 +31,6 @@ function InstallVagrant {
     }
 }
 
-# Packer
-function InstallPacker {
-    if (-not (Get-Command packer -ErrorAction SilentlyContinue)) {
-        Write-Host "Packer is not installed. Installing..."
-        choco install packer -y
-    }
-    else {
-        Write-Host "Packer is already installed."
-    }
-}
-
 # Virtualbox
 function InstallVirtualbox {
     if (-not (Get-Command VBoxManage -ErrorAction SilentlyContinue)) {
@@ -55,7 +44,6 @@ function InstallVirtualbox {
 
 InstallChoco
 InstallVagrant
-InstallPacker
 InstallVirtualbox
 
 # Sleep before exiting script
