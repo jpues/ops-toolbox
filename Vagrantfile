@@ -8,6 +8,8 @@ box_cpu = 2
 box_gui = true
 box_network = "private_network"
 box_provider = "virtualbox"
+redhat_username  = "<%= ENV['RH_USERNAME'] %>" # environment var RH_USERNAME
+redhat_password  = "<%= ENV['RH_PASSWORD'] %>" # environment var RH_PASSWORD
 
 # provisioner files
 redhat_manager = "files/redhat-manager.sh"
@@ -15,8 +17,14 @@ install_ansible = "files/install-ansible.sh"
 install_gui = "files/install-gui.sh"
 
 # synced/mounted folders
-synced_folder_src = "../.."
-synced_folder_dest = "/vagrant"
+synced_folder_src = ".." # path to mount to vm; relative to this file
+synced_folder_dest = "/shared" # path on vm to mount to
+
+# exit if RH_USERNAME and RH_PASSWORD aren't set
+if !redhat_username or !redhat_password
+  puts 'Required environment variables not found. Please set RH_USERNAME and RH_PASSWORD'
+  abort
+end
 
 # Vagrant configuration
 Vagrant.configure("2") do |config|
